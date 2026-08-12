@@ -1,121 +1,97 @@
-<div align="center">
+# PragyaVyom
 
-# 🪐 PragyaVyom
-### *Explainable AI for Exoplanet Transit Detection*
+An explainable AI pipeline for detecting exoplanet transit signals in TESS light curves. Built for the **BrainWave** competition.
 
-**Finding worlds beyond our solar system — one light curve at a time.**
-
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_App-6366f1?style=for-the-badge)](https://pragya-vyom.vercel.app)
-[![MIT License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
-[![TanStack](https://img.shields.io/badge/Built_with-TanStack_Start-f97316?style=for-the-badge)](https://tanstack.com/start)
-[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)](https://react.dev)
-
-</div>
+**Live:** https://pragya-vyom.vercel.app
 
 ---
 
-## ✨ What is PragyaVyom?
+## What it does
 
-**PragyaVyom** *(Sanskrit: प्रज्ञाव्योम — "Intelligent Sky")* is an **end-to-end, explainable AI pipeline** that analyzes raw TESS (Transiting Exoplanet Survey Satellite) light curves to detect, classify, and interpret potential exoplanet transit signals — right in your browser.
+Space telescopes like TESS (Transiting Exoplanet Survey Satellite) record the brightness of stars over time — these recordings are called light curves. When a planet passes in front of its star, it causes a tiny, periodic dip in brightness. That dip is a transit signal.
 
-No downloads. No setup. Just science.
+The problem: TESS data is noisy. Instrument artifacts, stellar variability, and background contamination all produce dips that look like transits but aren't. Manually reviewing thousands of candidates is slow and error-prone.
 
-> 🔭 Point it at a star. Watch it hunt for planets.
+PragyaVyom automates this process end-to-end — from raw light curve to a classified, explained result — and runs entirely in the browser.
 
 ---
 
-## 🌟 Key Features
+## Pipeline walkthrough
 
-| Feature | Description |
+### 1. Signal generation
+The app simulates TESS-realistic light curves with configurable stellar parameters. This lets you test the pipeline without needing raw FITS files from the TESS archive.
+
+### 2. Denoising
+Raw light curves carry multiple noise layers:
+- **Instrumental systematics** — scattered light, momentum dumps, thermal drifts
+- **Stellar noise** — granulation, oscillations, spot rotation
+
+The pipeline applies a multi-stage filter to separate genuine astrophysical signal from noise before any detection runs.
+
+### 3. Transit detection
+Uses **Transit Least Squares (TLS)** — a period-folding algorithm that searches for the best-fit box-shaped dip across a grid of trial periods and durations. Outputs a ranked list of transit candidates with their periods, depths, and durations.
+
+### 4. Classification
+Each candidate is passed through a **CNN + Transformer hybrid** that classifies it into one of five categories:
+
+| Label | Meaning |
 |---|---|
-| 🌊 **Multi-Level Denoising** | Removes instrumental and stellar noise using specialized filters |
-| 🔍 **Transit Detection** | Transit Least Squares (TLS) algorithm for candidate identification |
-| 🤖 **Hybrid AI Model** | CNN + Transformer architecture classifies signals into 5 categories |
-| 🧠 **Explainable AI** | SHAP, LIME, GradCAM & Attention Maps to interpret every decision |
-| 📐 **Parameter Estimation** | `batman` + MCMC to estimate orbital parameters with uncertainty bounds |
-| 📊 **Live Dashboard** | Interactive browser-based visualization — no install required |
-| 🗂️ **Batch Processing** | Run multi-target surveys across hundreds of light curves |
+| Planetary transit | Genuine exoplanet candidate |
+| Eclipsing binary | Two stars orbiting each other |
+| Stellar blend | Contamination from a background source |
+| Variable star | Intrinsic brightness variation of the host star |
+| Noise | No astrophysical signal |
+
+The CNN captures local shape features (ingress, egress, flat bottom), while the Transformer attends to global periodicity patterns across the full light curve.
+
+### 5. Explainability
+Classification without explanation is not science. The pipeline generates:
+- **SHAP values** — which time-domain features pushed the model toward a given class
+- **LIME** — local surrogate model that approximates the decision boundary around each prediction
+- **GradCAM** — gradient-weighted activation maps showing which regions of the folded transit the CNN focused on
+- **Attention maps** — the Transformer's self-attention weights across the sequence
+
+This makes every prediction auditable.
+
+### 6. Parameter estimation
+For candidates classified as planetary transits, the pipeline fits a physical transit model using:
+- **batman** (Bad-Ass Transit Model cAlculatioN) — generates the theoretical light curve shape from orbital parameters
+- **MCMC (emcee)** — samples the posterior distribution over those parameters
+
+Outputs: orbital period, planet-to-star radius ratio, impact parameter, transit duration — each with uncertainty bounds.
+
+### 7. Dashboard
+The web interface ties everything together. You can step through each stage, inspect intermediate outputs, run batch surveys across multiple targets, and export results.
 
 ---
 
-## 🛰️ Signal Classification
+## Tech stack
 
-PragyaVyom classifies every detected signal into one of:
+**Frontend**
+- React 19, TanStack Router, Recharts, Tailwind CSS v4, Radix UI
+- All signal processing runs client-side in the browser (no backend required)
 
-- 🪐 **Planetary Transit** — a real exoplanet candidate
-- ☀️ **Eclipsing Binary** — two stars orbiting each other
-- 🌫️ **Stellar Blend** — contamination from a background star
-- 🌀 **Variable Star** — intrinsic stellar variability
-- 📉 **Noise** — instrumental artifact, no signal
-
----
-
-## 🛠️ Tech Stack
-
-**Frontend (Web App)**
-```
-React 19 · TanStack Start · TanStack Router · Recharts · Tailwind CSS v4
-Radix UI · TypeScript · Vite
-```
-
-**AI/ML Pipeline**
-```
-Python 3.12+ · TensorFlow / PyTorch · scikit-learn
-SHAP · LIME · GradCAM · batman (transit modeling) · emcee (MCMC)
-NumPy · Pandas · Astropy · Matplotlib · Plotly
-```
+**AI/ML (research pipeline)**
+- Python 3.12, PyTorch / TensorFlow, scikit-learn
+- SHAP, LIME, GradCAM for explainability
+- batman, emcee for transit modeling
+- Astropy, NumPy, Pandas
 
 ---
 
-## 📂 Project Structure
-
-```
-pragya-vyom/
-├── src/
-│   ├── components/         # UI components (header, footer, charts, panels)
-│   ├── routes/             # App pages (detection, batch, methodology, project)
-│   ├── lib/
-│   │   └── pipeline/       # Core signal processing (generate, analyze, stats)
-│   └── styles.css          # Global design system
-├── public/                 # Static assets
-├── vite.config.ts          # Build configuration
-└── vercel.json             # Deployment config
-```
-
----
-
-## 🚀 Run Locally
+## Run locally
 
 ```bash
-# Clone the repo
 git clone https://github.com/GauthamHarishvar/PragyaVyom.git
 cd PragyaVyom
-
-# Install dependencies
 npm install
-
-# Start dev server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) 🎉
-
 ---
 
-## 🌍 Use Cases
+## Project context
 
-- 🔬 **Research** — Automated exoplanet candidate vetting from TESS data
-- 📚 **Education** — Interactive tool for astrophysics & AI courses
-- 🏆 **Competitions** — Showcase-ready explainable AI for space science
+Submitted to the **BrainWave** competition. The core question we're answering: can a fully browser-based, explainable AI system replace manual vetting in exoplanet candidate review pipelines — and be transparent enough for researchers to trust?
 
----
-
-## 👥 Team
-
-Built with ❤️ for the **Design Thinking & Innovation** course.
-
----
-
-## 📜 License
-
-[MIT](LICENSE) — free to use, modify, and distribute.
+The answer, so far, is yes.
