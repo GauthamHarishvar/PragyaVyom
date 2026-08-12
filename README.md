@@ -1,140 +1,121 @@
-# 🌌 PragyaVyom
-An end-to-end, explainable AI pipeline for analyzing TESS light curves to detect, classify, and interpret potential exoplanet transit signals.
+<div align="center">
 
-## 📖 Overview
+# 🪐 PragyaVyom
+### *Explainable AI for Exoplanet Transit Detection*
 
-PragyaVyom is designed to help astronomers and researchers process noisy space telescope data with minimal manual intervention. It combines advanced denoising, machine learning classification, explainability techniques, and orbital parameter estimation to provide a complete workflow from raw data to scientific insights.
+**Finding worlds beyond our solar system — one light curve at a time.**
 
-**Live app**: https://pragya-vyom.lovable.app
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_App-6366f1?style=for-the-badge)](https://pragya-vyom.vercel.app)
+[![MIT License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
+[![TanStack](https://img.shields.io/badge/Built_with-TanStack_Start-f97316?style=for-the-badge)](https://tanstack.com/start)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)](https://react.dev)
 
+</div>
 
+---
 
-## 🚀 Features
+## ✨ What is PragyaVyom?
 
+**PragyaVyom** *(Sanskrit: प्रज्ञाव्योम — "Intelligent Sky")* is an **end-to-end, explainable AI pipeline** that analyzes raw TESS (Transiting Exoplanet Survey Satellite) light curves to detect, classify, and interpret potential exoplanet transit signals — right in your browser.
 
-TESS Data Processing: Automatic ingestion and preprocessing of light curves.
+No downloads. No setup. Just science.
 
-Multi-Level Denoising: Removes instrumental and stellar noise using specialized filters.
+> 🔭 Point it at a star. Watch it hunt for planets.
 
-Transit Detection: Implements Transit Least Squares (TLS) for candidate identification.
+---
 
-Hybrid AI Model: CNN + Transformer architecture for signal classification (planetary transit, eclipsing binary, stellar blend, variable star, or noise).
+## 🌟 Key Features
 
-Explainable AI: SHAP, LIME, GradCAM, and Attention Maps to interpret model decisions.
+| Feature | Description |
+|---|---|
+| 🌊 **Multi-Level Denoising** | Removes instrumental and stellar noise using specialized filters |
+| 🔍 **Transit Detection** | Transit Least Squares (TLS) algorithm for candidate identification |
+| 🤖 **Hybrid AI Model** | CNN + Transformer architecture classifies signals into 5 categories |
+| 🧠 **Explainable AI** | SHAP, LIME, GradCAM & Attention Maps to interpret every decision |
+| 📐 **Parameter Estimation** | `batman` + MCMC to estimate orbital parameters with uncertainty bounds |
+| 📊 **Live Dashboard** | Interactive browser-based visualization — no install required |
+| 🗂️ **Batch Processing** | Run multi-target surveys across hundreds of light curves |
 
-Parameter Estimation: Uses batman (Bad-Ass Transit Model cAlculatioN) + MCMC to estimate orbital parameters with uncertainty bounds.
+---
 
-Interactive Dashboard: Researcher-friendly interface to visualize detections, explanations, and results.
+## 🛰️ Signal Classification
 
+PragyaVyom classifies every detected signal into one of:
+
+- 🪐 **Planetary Transit** — a real exoplanet candidate
+- ☀️ **Eclipsing Binary** — two stars orbiting each other
+- 🌫️ **Stellar Blend** — contamination from a background star
+- 🌀 **Variable Star** — intrinsic stellar variability
+- 📉 **Noise** — instrumental artifact, no signal
+
+---
 
 ## 🛠️ Tech Stack
 
-
-Languages: Python 3.12+
-
-Libraries:
+**Frontend (Web App)**
 ```
-Data: numpy, pandas, astropy
-
-ML: tensorflow / pytorch, scikit-learn
-
-Explainability: shap, lime, grad-cam
-
-Transit Modeling: batman, emcee (MCMC)
-
-Visualization: matplotlib, plotly, dash
+React 19 · TanStack Start · TanStack Router · Recharts · Tailwind CSS v4
+Radix UI · TypeScript · Vite
 ```
 
+**AI/ML Pipeline**
+```
+Python 3.12+ · TensorFlow / PyTorch · scikit-learn
+SHAP · LIME · GradCAM · batman (transit modeling) · emcee (MCMC)
+NumPy · Pandas · Astropy · Matplotlib · Plotly
+```
+
+---
 
 ## 📂 Project Structure
+
 ```
 pragya-vyom/
-│── data/               # Raw and processed light curves
-│── notebooks/          # Jupyter notebooks for experiments
-│── src/                # Core pipeline modules
-│   ├── preprocessing/  # Denoising & data handling
-│   ├── detection/      # Transit Least Squares
-│   ├── models/         # CNN + Transformer
-│   ├── explainability/ # SHAP, LIME, GradCAM
-│   └── estimation/     # batman + MCMC
-│── dashboard/          # Interactive visualization
-│── tests/              # Unit tests
-│── README.md           # Project documentation
+├── src/
+│   ├── components/         # UI components (header, footer, charts, panels)
+│   ├── routes/             # App pages (detection, batch, methodology, project)
+│   ├── lib/
+│   │   └── pipeline/       # Core signal processing (generate, analyze, stats)
+│   └── styles.css          # Global design system
+├── public/                 # Static assets
+├── vite.config.ts          # Build configuration
+└── vercel.json             # Deployment config
 ```
 
+---
 
-## ⚙️ Installation
-```
-git clone https://github.com/deepalakshmi-ssr/pragya-vyom.git
-cd pragya-vyom
-pip install -r requirements.txt
-```
+## 🚀 Run Locally
 
+```bash
+# Clone the repo
+git clone https://github.com/GauthamHarishvar/PragyaVyom.git
+cd PragyaVyom
 
-## ▶️ Usage
+# Install dependencies
+npm install
 
-1. Pre-process Data
-```
-python src/preprocessing/run_pipeline.py --input data/tess_lightcurve.fits
-```
-
-2. Run Transit Detection:
-```
-python src/detection/tls.py
+# Start dev server
+npm run dev
 ```
 
-3. Classify Signals:
-```
-python src/models/classify.py
-```
+Open [http://localhost:3000](http://localhost:3000) 🎉
 
-4. Explain Predictions
-```
-python src/explainability/explain.py
-```
+---
 
-5. Estimate Parameters
-```
-python src/estimation/fit_transit.py
-```
+## 🌍 Use Cases
 
-6. Launch Dashboard
-```
-python dashboard/app.py
-```
+- 🔬 **Research** — Automated exoplanet candidate vetting from TESS data
+- 📚 **Education** — Interactive tool for astrophysics & AI courses
+- 🏆 **Competitions** — Showcase-ready explainable AI for space science
 
+---
 
-## 📊 Example Output
+## 👥 Team
 
+Built with ❤️ for the **Design Thinking & Innovation** course.
 
-Transit candidates with confidence scores.
-
-Classification labels (planetary transit, binary, noise).
-
-Explainability plots (SHAP values, GradCAM heatmaps).
-
-Orbital parameters with uncertainty bounds.
-
-Interactive dashboard for exploration.
-
-
-
-## 🌍 Applications
-
-
-Automated exoplanet candidate vetting.
-
-Research support for astronomers using TESS data.
-
-Educational tool for astrophysics and AI courses.
-
-
-
-## 🤝 Contributing
-
-Contributions are welcome! Please fork the repo, create a feature branch, and submit a pull request.
-
+---
 
 ## 📜 License
 
-MIT License – free to use, modify, and distribute.
+[MIT](LICENSE) — free to use, modify, and distribute.
