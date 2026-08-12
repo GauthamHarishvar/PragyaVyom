@@ -1,0 +1,135 @@
+import type { TargetSpec } from "./generate";
+
+/** Curated TESS sector sample used by the prototype (MAST-style TIC identifiers). */
+export const TARGETS: TargetSpec[] = [
+  {
+    id: "TIC-307210830",
+    tic: "307210830",
+    sector: 28,
+    tmag: 9.6,
+    teff: 3505,
+    radius: 0.34,
+    kind: "Planetary Transit",
+    note: "Known multi-planet M-dwarf host, short-period super-Earth",
+    catalog: "L 98-59 (confirmed)",
+  },
+  {
+    id: "TIC-260647166",
+    tic: "260647166",
+    sector: 14,
+    tmag: 10.8,
+    teff: 3480,
+    radius: 0.42,
+    kind: "Planetary Transit",
+    note: "Sub-Neptune candidate, moderate SNR",
+    catalog: "TOI-1235 (confirmed)",
+  },
+  {
+    id: "TIC-38846515",
+    tic: "38846515",
+    sector: 6,
+    tmag: 11.9,
+    teff: 6280,
+    radius: 1.24,
+    kind: "Eclipsing Binary",
+    note: "Detached binary with secondary eclipse at phase 0.5",
+  },
+  {
+    id: "TIC-149603524",
+    tic: "149603524",
+    sector: 21,
+    tmag: 12.4,
+    teff: 5890,
+    radius: 1.02,
+    kind: "Stellar Blend",
+    note: "Grazing / blended event from a nearby contaminant",
+  },
+  {
+    id: "TIC-441420236",
+    tic: "441420236",
+    sector: 11,
+    tmag: 10.2,
+    teff: 7100,
+    radius: 1.61,
+    kind: "Variable Star",
+    note: "Delta Scuti style pulsator, continuous modulation",
+  },
+  {
+    id: "TIC-96246348",
+    tic: "96246348",
+    sector: 33,
+    tmag: 13.1,
+    teff: 5210,
+    radius: 0.88,
+    kind: "Noise",
+    note: "Quiet star, systematics only — control target",
+  },
+  {
+    id: "TIC-279741379",
+    tic: "279741379",
+    sector: 19,
+    tmag: 9.1,
+    teff: 4410,
+    radius: 0.71,
+    kind: "Planetary Transit",
+    note: "Warm Jupiter, deep high-SNR transit",
+  },
+  {
+    id: "TIC-124573851",
+    tic: "124573851",
+    sector: 28,
+    tmag: 12.9,
+    teff: 5980,
+    radius: 1.09,
+    kind: "Eclipsing Binary",
+    note: "Short-period contact binary, ellipsoidal variation",
+  },
+];
+
+export const PIPELINE_STAGES = [
+  {
+    id: "ingest",
+    name: "Data ingestion",
+    detail: "PDCSAP flux from MAST · quality-flag masking · normalisation",
+  },
+  {
+    id: "denoise",
+    name: "Multi-layer denoising",
+    detail: "Savitzky-Golay filter → wotan biweight detrending → autoencoder residual",
+  },
+  {
+    id: "balance",
+    name: "Synthetic augmentation",
+    detail: "batman transit injection + SMOTE rebalancing of the 4.2% planet class",
+  },
+  {
+    id: "tls",
+    name: "Transit Least Squares",
+    detail: "Log-spaced period search across 0.5–13 days with SDE peak refinement",
+  },
+  {
+    id: "classify",
+    name: "Hybrid 1D CNN + Transformer",
+    detail: "5-class inference: planet, binary, blend, variable, noise",
+  },
+  {
+    id: "xai",
+    name: "Explainability layer",
+    detail: "SHAP attributions + GradCAM saliency + LIME probes + attention maps",
+  },
+  {
+    id: "mcmc",
+    name: "Parameter estimation",
+    detail: "batman light-curve fit with emcee MCMC ±uncertainty bounds",
+  },
+] as const;
+
+export const MODEL_METRICS = {
+  accuracy: 92.4,
+  falsePositiveRate: 8.6,
+  baselineAccuracy: 85,
+  baselineFalsePositiveRate: 70,
+  classes: 5,
+  syntheticTransits: 5000,
+  trainingCurves: 24800,
+};
